@@ -1,15 +1,11 @@
-import {Button, Image} from 'antd';
-import {UserOutlined} from "@ant-design/icons";
+import {Button} from 'antd';
+
 import {useEffect, useState} from 'react';
 import {BorrowYourCarContract, web3} from "../utils/contract";
 import './index.css';
-import {Simulate} from "react-dom/test-utils";
-import {BrowserRouter as Router,Link,Route} from 'react-router-dom'
-//import {car0,car1,car2,car3,car4,car5} from '../asset'
-//import car0 from '../asset/car0.jpg'
 
-import error = Simulate.error;
-import {car0} from "../asset";
+
+
 
 const GanacheTestChainId = '0x539' // Ganache默认的ChainId = 0x539 = Hex(1337)
 // TODO change according to your configuration
@@ -40,7 +36,6 @@ const MainPage = () => {
     const [car, setCar] = useState('')
 
     const zeroAddress = '0x0000000000000000000000000000000000000000'
-    const p = "gw"
 
 
 
