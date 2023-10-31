@@ -6,6 +6,7 @@ async function main() {
   await borrowYourCar.deployed();
 
   console.log(`BorrowYourCar deployed to ${borrowYourCar.address}`);
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere
