@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.19;
 
 // Uncomment the line to use openzeppelin/ERC721
 // You can use this dependency directly because it has been installed by TA already
@@ -45,7 +45,6 @@ contract BorrowYourCar is ERC721{
 //    }
 
     // ...
-    // TODO add any logic if you want
 
     // 获取当前还没有借用的汽车列表
     function getAvailableCars() public view returns (uint256[] memory) {
@@ -86,11 +85,10 @@ contract BorrowYourCar is ERC721{
 
     function borrowCar(uint256 carTokenId, uint256 duration) public returns (bool){
         uint256 startTime = block.timestamp;
-        if(carTokenId < tokenid && cars[carTokenId].borrowUntil > startTime) return false;
+        require(carTokenId < tokenid && cars[carTokenId].borrowUntil < startTime, "You can not borrow this car!");
         cars[carTokenId].borrower = msg.sender;
         cars[carTokenId].borrowUntil = startTime + duration;
         emit Approval(cars[carTokenId].owner, msg.sender, carTokenId);
-
         emit CarBorrowed(carTokenId, msg.sender, startTime ,duration);
         return true;
     }

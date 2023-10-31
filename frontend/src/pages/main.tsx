@@ -185,7 +185,7 @@ const MainPage = () => {
                 console.log(model)
                 const result = await BorrowYourCarContract.methods.mintCarNFT(recipient, model).send({from: account})
                 console.log(result)
-                alert("add successfully")
+                alert("mint car successfully")
             } catch (error: any) {
                 alert(error.message)
             }
@@ -305,7 +305,7 @@ const MainPage = () => {
                     <div>当前用户所拥有的汽车型号：</div>
                     <div>
                         {ownCarModel.map((item, index) => (
-                            <img key={index} src={require(`../asset/${item}.jpg`)} alt={item}/>
+                            <img key={index} src={`${item}.jpg`} alt={item}/>
                         ))}
                     </div>
                 </div>
@@ -319,7 +319,7 @@ const MainPage = () => {
                     <div>当前可借用的汽车型号：</div>
                     <div>
                         {availableCarModel.map((item, index) => (
-                            <img key={index} src={require(`../asset/${item}.jpg`)} alt={item}/>
+                            <img key={index} src={`${item}.jpg`} alt={item}/>
                         ))}
                     </div>
                 </div>

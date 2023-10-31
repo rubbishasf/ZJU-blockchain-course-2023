@@ -1,29 +1,8 @@
-# ZJU-blockchain-course-2023
+# 汽车借用系统
 
-⬆ 可以️修改成你自己的项目名。
 
-> 第二次作业要求（以下内容提交时可以删除）：
-> 
-> 简易汽车借用系统，参与方包括：汽车拥有者，有借用汽车需求的用户
->
-> 背景：ERC-4907 基于 ERC-721 做了简单的优化和补充，允许用户对NFT进行租借。
-> - 创建一个合约，在合约中发行NFT集合，每个NFT代表一辆汽车。给部分用户测试领取部分汽车NFT，用于后面的测试。
-> - 在网站中，默认每个用户的汽车都可以被借用。每个用户可以： 
->    1. 查看自己拥有的汽车列表。查看当前还没有被借用的汽车列表。
->    2. 查询一辆汽车的主人，以及该汽车当前的借用者（如果有）。
->    3. 选择并借用某辆还没有被借用的汽车一定时间。
->    4. 上述过程中借用不需要进行付费。
-> 
-> - （Bonus）使用自己发行的积分（ERC20）完成付费租赁汽车的流程
-> - 请大家专注于功能实现，网站UI美观程度不纳入评分标准，但要让用户能够舒适操作。简便起见，可以在网上找图片代表不同汽车，不需要将图片在链上进行存储。
-
-**以下内容为作业仓库的README.md中需要描述的内容。请根据自己的需要进行修改并提交。**
-
-作业提交方式为：**提交视频文件**和**仓库的链接**到指定邮箱。
 
 ## 如何运行
-
-补充如何完整运行你的应用。
 
 1. 在本地启动ganache应用。
 
@@ -31,12 +10,17 @@
     ```bash
     npm install
     ```
-3. 在 `./contracts` 中编译合约，运行如下的命令：
+3. 在`./contracts/hardhat.config.ts`中修改自己的ganache的url以及对应账户的私钥。
+
+4. 在 `./contracts` 中编译合约，运行如下的命令：
     ```bash
     npx hardhat compile
     ```
-4. ...
-5. ...
+5. 编译成功后在`./contracts`中部署合约，运行如下的命令：
+   ```bash
+   npx hardhat run ./scripts/deploy.ts --network ganache
+   ```
+部署成功后将`./frontend/src/utils/contract-address.json`中合约的地址修改为刚刚部署成功后显示的地址。
 6. 在 `./frontend` 中安装需要的依赖，运行如下的命令：
     ```bash
     npm install
@@ -45,23 +29,64 @@
     ```bash
     npm run start
     ```
+   接下来可以使用Chrome浏览器进入"http://localhost:3000"来访问此系统了
 
 ## 功能实现分析
 
-简单描述：项目完成了要求的哪些功能？每个功能具体是如何实现的？
+### 1. 发行NFT
+在部署合约时将合约的部署者设置为管理员，使用一个`mapping(address=>bool)`来记录一个用户是否有资格获得carNFT。管理员可以添加validuser来向这些用户分发NFT。
+在发行carNFT时，合约中会记录当前已经发行的carNFT的数量，以及各个NFT的owner，相对应也有各个用户所拥有的所有carNFT。
 
-建议分点列出。
+**提示** :当前库中存放汽车的图片仅有"car0"~"car5"，如果发行其他model的车则不会显示图片。
+
+### 2.查看当前用户所拥有的汽车
+用户在连接钱包后即可实时地看到自己所拥有的汽车，该记录由一个`mapping(address=>uint256[])`来记录,可以通过其直接返回对应的结果。
+
+### 3. 查看当前可借用的汽车
+用户在连接到钱包后可以实时看到可借用的汽车列表，通过查看借用记录（由一个struct数组维护）来返回结果：
+```solidity
+struct Car {
+   address owner;
+   address borrower;
+   uint256 borrowUntil;
+}
+```
+如果没有borrower或者borrowUntil小于当前的时间，则认为该汽车是可借用的。
+### 4. 查找一辆汽车的主人和借用者
+用户可以在网页中输入CarToken(相当于车牌号)来对一辆车的信息进行查询，包括它的主人和借用者。主人的信息在发行CarNFT时已经记录，借用者也可以通过查询上面的结构体数组来获得，如果borrower不为0且borrowUntil大于当前时间，则有借用者，否则没有。
+
+### 5. 借用车辆
+
+用户可以输入CarToken和要借用的天数来借用一辆车，这辆车必须在上面的可借用汽车列表中，否则会失败。通过调用ERC721的`approval`函数，持有人将 NFT 的所有权授权给借用者。
+为了与用户交互方便，在用户输入时输入天数，但我们在solidity中使用时间戳记录时间，因此需要将该时间换算为秒。
+
 
 ## 项目运行截图
 
-放一些项目运行截图。
+连接钱包
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194522.png)
+非管理员调用addvaliduser函数
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194540.png)
+管理员调用addvaliduser函数
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194547.png)
+非管理员发行CarNFT
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031195331.png)
+管理员发行CarNFT
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194554.png)
+发行后显示可借用的汽车型号（因为不是发行给当前用户的，所有当前用户拥有的为空）
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194559.png)
+更换为拥有汽车的账户：
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194603.png)
+查找汽车主人和借用者
 
-项目运行成功的关键页面和流程截图。主要包括操作流程以及和区块链交互的截图。
-
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194607.png)
+再更换一个用户借用这辆车
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031195140.png)
+借用后显示无可借用的车：
+![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194611.png)
 ## 参考内容
 
 - 课程的参考Demo见：[DEMOs](https://github.com/LBruyne/blockchain-course-demos)。
 
 - ERC-4907 [参考实现](https://eips.ethereum.org/EIPS/eip-4907)
 
-如果有其它参考的内容，也请在这里陈列。
