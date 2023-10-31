@@ -67,26 +67,45 @@ struct Car {
 ## 项目运行截图
 
 连接钱包
+
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194522.png)
+
 非管理员调用addvaliduser函数
+
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194540.png)
+
 管理员调用addvaliduser函数
+
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194547.png)
+
 非管理员发行CarNFT
+
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031195331.png)
+
 管理员发行CarNFT
+
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194554.png)
+
 发行后显示可借用的汽车型号（因为不是发行给当前用户的，所有当前用户拥有的为空）
+
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194559.png)
+
 更换为拥有汽车的账户：
+
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194603.png)
+
 查找汽车主人和借用者
 
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194607.png)
+
 再更换一个用户借用这辆车
+
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031195140.png)
+
 借用后显示无可借用的车：
+
 ![Alt text](screenshot/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231031194611.png)
+
 ## 参考内容
 
 - 课程的参考Demo见：[DEMOs](https://github.com/LBruyne/blockchain-course-demos)。
