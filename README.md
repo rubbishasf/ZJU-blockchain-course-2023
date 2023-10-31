@@ -21,14 +21,17 @@
    npx hardhat run ./scripts/deploy.ts --network ganache
    ```
 部署成功后将`./frontend/src/utils/contract-address.json`中合约的地址修改为刚刚部署成功后显示的地址。
+
 6. 在 `./frontend` 中安装需要的依赖，运行如下的命令：
     ```bash
     npm install
     ```
+    
 7. 在 `./frontend` 中启动前端程序，运行如下的命令：
     ```bash
     npm run start
     ```
+    
    接下来可以使用Chrome浏览器进入"http://localhost:3000"来访问此系统了
 
 ## 功能实现分析
