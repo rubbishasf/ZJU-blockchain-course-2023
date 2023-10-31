@@ -3,6 +3,13 @@ import {UserOutlined} from "@ant-design/icons";
 import {useEffect, useState} from 'react';
 import {BorrowYourCarContract, web3} from "../utils/contract";
 import './index.css';
+import {Simulate} from "react-dom/test-utils";
+import {BrowserRouter as Router,Link,Route} from 'react-router-dom'
+//import {car0,car1,car2,car3,car4,car5} from '../asset'
+//import car0 from '../asset/car0.jpg'
+
+import error = Simulate.error;
+import {car0} from "../asset";
 
 const GanacheTestChainId = '0x539' // Ganache默认的ChainId = 0x539 = Hex(1337)
 // TODO change according to your configuration
@@ -10,21 +17,31 @@ const GanacheTestChainName = 'Ganache Test Chain'
 const GanacheTestChainRpcUrl = 'http://127.0.0.1:8545'
 
 const MainPage = () => {
-
+    //账户信息
     const [account, setAccount] = useState('')
     const [managerAccount, setManagerAccount] = useState('')
+    //添加可以领车的用户
     const [validuser, setValidUser] = useState('')
+    //发行NFT
     const [recipient, setRecipient] = useState('')
     const [model, setModel] = useState('')
+    //拥有的车
     const [ownCar, setOwnCar] = useState([])
+    const [ownCarModel, setOwnCarModel] = useState([])
+    //可借的车
     const [availableCar, setAvailableCar] = useState([])
+    const [availableCarModel, setAvailableCarModel] = useState([])
+    //查询车辆信息
     const [carToken, setCarToken] = useState('')
     const [carOwner, setCarOwner] = useState('')
     const [carBorrower, setCarBorrower] = useState('')
+    //借车
     const [duration, setDuration] = useState('')
     const [car, setCar] = useState('')
 
     const zeroAddress = '0x0000000000000000000000000000000000000000'
+    const p = "gw"
+
 
 
     const handleCarTokenChange = (event:any)=>{
@@ -76,8 +93,10 @@ const MainPage = () => {
                         // console.log(oc)
                         // setOwnCar(oc)
                         const ac = await BorrowYourCarContract.methods.getAvailableCars().call()
-                        console.log(ac)
+                        //console.log(ac)
                         setAvailableCar(ac)
+                        const acm = await BorrowYourCarContract.methods.getAvailableCarModels().call()
+                        setAvailableCarModel(acm)
                     }catch (error:any){
                         alert(error.message)
                     }
@@ -92,9 +111,18 @@ const MainPage = () => {
         , [])
     useEffect(() => {
         const getAccountInfo = async () => {
+
+
             if (BorrowYourCarContract) {
-                const ab = await BorrowYourCarContract.methods.getOwnedCars(account).call()
-                setOwnCar(ab)
+                try {
+                    const ab = await BorrowYourCarContract.methods.getOwnedCars(account).call()
+                    setOwnCar(ab)
+
+                    const ocm = await BorrowYourCarContract.methods.getOwnedCarModels(account).call()
+                    setOwnCarModel(ocm)
+                } catch (error: any) {
+                    alert(error.message)
+                }
             } else {
                 alert('Contract not exists.')
             }
@@ -271,26 +299,40 @@ const MainPage = () => {
                     {account === '' && <Button onClick={onClickConnectWallet}>连接钱包</Button>}
                     <div>当前用户：{account === '' ? '无用户连接' : account}</div>
                 </div>
+
                 <div className='owncar'>
-                    <div>当前用户所拥有的汽车：</div>
+                    <div>当前用户所拥有的汽车token：</div>
                     <ul>
                         {ownCar.map((item, index) => (
                             <li key={index}>{item}</li>
                         ))}
                     </ul>
+                    <div>当前用户所拥有的汽车型号：</div>
+                    <div>
+                        {ownCarModel.map((item, index) => (
+                            <img key={index} src={require(`../asset/${item}.jpg`)} alt={item}/>
+                        ))}
+                    </div>
                 </div>
                 <div className='avilablecar'>
-                    <div>当前可借用的汽车：</div>
+                    <div>当前可借用的汽车token：</div>
                         <ul>
                         {availableCar.map((item, index) => (
                             <li key={index}>{item}</li>
                         ))}
                     </ul>
+                    <div>当前可借用的汽车型号：</div>
+                    <div>
+                        {availableCarModel.map((item, index) => (
+                            <img key={index} src={require(`../asset/${item}.jpg`)} alt={item}/>
+                        ))}
+                    </div>
                 </div>
 
                 <div className='operation'>
                     <div className='buttons'>
                         <form onSubmit={addValidUser}>
+                            <label>添加可以领取车辆的用户：</label>
                             <div>
                                 <label htmlFor="validuser">Useraddress:</label>
                                 <input
@@ -304,7 +346,7 @@ const MainPage = () => {
                             <button type="submit">addvaliduser</button>
                         </form>
                         <form onSubmit={mintCarNFT}>
-
+                            <label>发行车辆NFT：</label>
                             <div>
                                 <label htmlFor="Recipient">Recipientaddress:</label>
                                 <input
@@ -327,6 +369,7 @@ const MainPage = () => {
                         </form>
 
                         <form onSubmit={getCarOwner}>
+                            <label>查找汽车主人和借用者</label>
                             <div>
                                 <label htmlFor="validuser">carToken:</label>
                                 <input
@@ -348,9 +391,9 @@ const MainPage = () => {
 
 
                         <form onSubmit={borrowCar}>
-
+                            <label>借用车辆</label>
                             <div>
-                                <label htmlFor="car">car:</label>
+                                <label htmlFor="car">carToken:</label>
                                 <input
                                     type="text"
                                     id="borrower"

@@ -67,6 +67,14 @@ contract BorrowYourCar is ERC721{
 
         return result;
     }
+    function getAvailableCarModels() public view returns (string[] memory) {
+        uint256[] memory ac = getAvailableCars();
+        string[] memory result = new string[](ac.length);
+        for (uint256 j = 0; j < ac.length; j++) {
+            result[j] = getCarModel(ac[j]);
+        }
+        return result;
+    }
 
 
     function getCarBorrower(uint32 carTokenId) public view returns (address) { // return the car token ID of the current borrower of a car.
@@ -122,10 +130,10 @@ contract BorrowYourCar is ERC721{
         validuser[user] = true;
     }
 
-    function removeValidUser(address user) onlyOwner public {
-        require(validuser[user], "User is not eligible");
-        validuser[user] = false;
-    }
+//    function removeValidUser(address user) onlyOwner public {
+//        require(validuser[user], "User is not eligible");
+//        validuser[user] = false;
+//    }
 
 //    function getCarAmounts() public view returns (uint){
 //        return carmodel.length;
@@ -140,5 +148,16 @@ contract BorrowYourCar is ERC721{
             carIds[i] = ownerCar[user][i];
         }
         return carIds;
+    }
+
+    function getOwnedCarModels(address user) public view returns (string[] memory) {
+        // uint256 balance = balanceOf(msg.sender);
+        uint256 balance = ownerCar[user].length;
+        string[] memory carModels = new string[](balance);
+
+        for (uint256 i = 0; i < balance; i++) {
+            carModels[i] = getCarModel(ownerCar[user][i]);
+        }
+        return carModels;
     }
 }
